@@ -114,34 +114,42 @@ struct ChartCard<T: Plottable & Numeric & Comparable>: View {
             }
             
             // The Chart
-            Chart {
-                ForEach(data) { reading in
-                    LineMark(
-                        x: .value("Time", reading.date),
-                        y: .value("Value", reading[keyPath: valueKeyPath])
-                    )
-                    .foregroundStyle(color.gradient)
-                    .interpolationMethod(.monotone)
-                    
-                    AreaMark(
-                        x: .value("Time", reading.date),
-                        y: .value("Value", reading[keyPath: valueKeyPath])
-                    )
-                    .foregroundStyle(color.opacity(0.1).gradient)
-                    .interpolationMethod(.monotone)
+            Group {
+                if let domain = yAxisDomain {
+                    chartView.chartYScale(domain: domain)
+                } else {
+                    chartView
                 }
-            }
-            .frame(height: 200)
-            .chartYScale(domain: yAxisDomain != nil ? .closed(yAxisDomain!) : .automatic)
-            // Simplified X axis to prevent crowding
-            .chartXAxis {
-                AxisMarks(values: .automatic(desiredCount: 4))
             }
         }
         .padding()
         .frame(maxWidth: .infinity)
         .glassCard()
         .padding(.horizontal)
+    }
+    
+    private var chartView: some View {
+        Chart {
+            ForEach(data) { reading in
+                LineMark(
+                    x: .value("Time", reading.date),
+                    y: .value("Value", reading[keyPath: valueKeyPath])
+                )
+                .foregroundStyle(color.gradient)
+                .interpolationMethod(.monotone)
+                
+                AreaMark(
+                    x: .value("Time", reading.date),
+                    y: .value("Value", reading[keyPath: valueKeyPath])
+                )
+                .foregroundStyle(color.opacity(0.1).gradient)
+                .interpolationMethod(.monotone)
+            }
+        }
+        .frame(height: 200)
+        .chartXAxis {
+            AxisMarks(values: .automatic(desiredCount: 4))
+        }
     }
     
     private func format(_ value: T?) -> String {
