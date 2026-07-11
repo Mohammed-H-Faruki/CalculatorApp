@@ -1,0 +1,25 @@
+name: WaterMonitoringSystem
+options:
+  bundleIdPrefix: com.mohammedu
+targets:
+  WaterMonitoringSystem:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources: [Sources]
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: "Water Monitor"
+        UILaunchScreen: {}
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mohammedu.watermonitoringsystem
+        PRODUCT_NAME: WaterMonitoringSystem
+        SWIFT_VERSION: "5.0"
+        ALWAYS_SEARCH_USER_PATHS: NO
+        CODE_SIGN_IDENTITY: ""
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGNING_ALLOWED: NO

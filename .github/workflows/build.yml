@@ -1,0 +1,50 @@
+name: Build Unsigned IPA
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: |
+          set -e
+          XCODEGEN_VERSION="2.45.4"
+          curl -fsSL \
+            "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip" \
+            -o xcodegen.zip
+          unzip -o xcodegen.zip
+          sudo install -m 755 xcodegen/bin/xcodegen /usr/local/bin/xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate --spec project.yml
+
+      - name: Build unsigned app
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project WaterMonitoringSystem.xcodeproj \
+            -scheme WaterMonitoringSystem \
+            -sdk iphoneos \
+            -configuration Release \
+            ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            -derivedDataPath build \
+            2>&1 | tee xcodebuild.log
+
+      - name: Show build log on failure
+        if: failure()
+        run: tail -200 xcodebuild.log || echo "(no log)"
+
+      - name: Package IPA
+        run: |
+          mkdir Payload
+          cp -r build/Build/Products/Release-iphoneos/WaterMonitoringSystem.app Payload/
+          zip -r WaterMonitoringSystem.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WaterMonitoringSystem-ipa
+          path: WaterMonitoringSystem.ipa
