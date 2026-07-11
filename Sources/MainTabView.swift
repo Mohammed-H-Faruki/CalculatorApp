@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Main Tab View
 
 struct MainTabView: View {
-    var body: some Scene {
+    var body: some View {
         TabView {
             DashboardView()
                 .tabItem {
