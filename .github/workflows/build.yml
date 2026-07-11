@@ -25,7 +25,7 @@ jobs:
           unzip -o xcodegen.zip
           echo "--- Unzipped contents ---"
           ls -la
-          sudo install -m 755 xcodegen /usr/local/bin/xcodegen
+          sudo install -m 755 xcodegen/bin/xcodegen /usr/local/bin/xcodegen
           xcodegen --version
 
       - name: Generate Xcode project
