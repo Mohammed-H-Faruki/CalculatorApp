@@ -6,9 +6,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install XcodeGen
-        run: brew install xcodegen
-        env:
-          HOMEBREW_NO_REQUIRE_TAP_TRUST: 1
+        run: |
+          brew untap aws/tap || true
+          brew install xcodegen
       - name: Generate Xcode project
         run: xcodegen generate
       - name: Build unsigned app
