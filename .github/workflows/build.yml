@@ -14,11 +14,18 @@ jobs:
 
       - name: Install XcodeGen (direct download, no brew)
         run: |
-          XCODEGEN_VERSION="2.42.0"
-          curl -L "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip" \
+          set -e
+          echo "--- Fetching latest XcodeGen release tag ---"
+          XCODEGEN_VERSION=$(curl -fsSL https://api.github.com/repos/yonaskolb/XcodeGen/releases/latest \
+            | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'])")
+          echo "Installing XcodeGen $XCODEGEN_VERSION"
+          curl -fsSL \
+            "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip" \
             -o xcodegen.zip
-          unzip xcodegen.zip
-          sudo mv xcodegen /usr/local/bin/xcodegen
+          unzip -o xcodegen.zip
+          echo "--- Unzipped contents ---"
+          ls -la
+          sudo install -m 755 xcodegen /usr/local/bin/xcodegen
           xcodegen --version
 
       - name: Generate Xcode project
