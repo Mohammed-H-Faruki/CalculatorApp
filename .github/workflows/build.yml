@@ -5,27 +5,50 @@ jobs:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: |
+          xcode-select -p
+          xcodebuild -version
+          swift --version
+
       - name: Install XcodeGen
         run: |
           brew untap aws/tap || true
           brew install xcodegen
+          xcodegen --version
+
       - name: Generate Xcode project
-        run: xcodegen generate
+        run: |
+          xcodegen generate --spec project.yml
+          echo "--- Generated project contents ---"
+          ls -la
+          xcodebuild -project Calculator.xcodeproj -list
+
       - name: Build unsigned app
         run: |
           set -o pipefail
           xcodebuild -project Calculator.xcodeproj -scheme Calculator \
             -sdk iphoneos -configuration Release \
+            ONLY_ACTIVE_ARCH=NO \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO \
             -derivedDataPath build 2>&1 | tee xcodebuild.log
+          echo "Build exit: $?"
+
       - name: Show build log on failure
         if: failure()
-        run: cat xcodebuild.log
+        run: |
+          echo "=== FULL XCODEBUILD LOG ==="
+          cat xcodebuild.log || echo "(no log file)"
+          echo "=== DIRECTORY LISTING ==="
+          ls -la build/Build/Products/ 2>/dev/null || echo "(no build products)"
+
       - name: Package IPA
         run: |
           mkdir Payload
           cp -r build/Build/Products/Release-iphoneos/Calculator.app Payload/
           zip -r Calculator.ipa Payload
+
       - uses: actions/upload-artifact@v4
         with:
           name: Calculator-ipa
