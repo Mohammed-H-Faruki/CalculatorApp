@@ -10,6 +10,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.mohammedu.calculator
+        GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         CODE_SIGN_IDENTITY: ""
         CODE_SIGNING_REQUIRED: NO

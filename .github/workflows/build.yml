@@ -13,10 +13,14 @@ jobs:
         run: xcodegen generate
       - name: Build unsigned app
         run: |
+          set -o pipefail
           xcodebuild -project Calculator.xcodeproj -scheme Calculator \
             -sdk iphoneos -configuration Release \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO \
-            -derivedDataPath build
+            -derivedDataPath build 2>&1 | tee xcodebuild.log
+      - name: Show build log on failure
+        if: failure()
+        run: cat xcodebuild.log
       - name: Package IPA
         run: |
           mkdir Payload
