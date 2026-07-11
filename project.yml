@@ -1,7 +1,6 @@
 name: Calculator
 options:
   bundleIdPrefix: com.mohammedu
-  xcodeVersion: "15.4"
 targets:
   Calculator:
     type: application
