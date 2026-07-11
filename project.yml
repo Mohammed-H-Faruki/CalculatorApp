@@ -1,0 +1,16 @@
+name: Calculator
+options:
+  bundleIdPrefix: com.mohammedu
+targets:
+  Calculator:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources: [Sources]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mohammedu.calculator
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        CODE_SIGN_IDENTITY: ""
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGNING_ALLOWED: NO
